@@ -1,205 +1,134 @@
-const totalPages = 11;
+/* =========================================
+   SCROLL GUIDE
+========================================= */
 
-let currentPage = 1;
+const scrollGuide = document.getElementById("scrollGuide");
 
-const menuImage = document.getElementById("menuImage");
-const pageNumber = document.getElementById("pageNumber");
-
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
-
-const fullscreenBtn = document.getElementById("fullscreenBtn");
-const menuViewer = document.getElementById("menuViewer");
+let guideHidden = false;
 
 
-// ==============================
-// Load Menu Page
-// ==============================
+/* =========================================
+   HIDE GUIDE
+========================================= */
 
-function showPage(page) {
+function hideScrollGuide() {
 
-    currentPage = page;
+    if (guideHidden) {
+        return;
+    }
 
-    const pageNumberFormatted = String(page).padStart(2, "0");
+    guideHidden = true;
 
-    menuImage.src = `assets/page-${pageNumberFormatted}.webp`;
-
-    menuImage.alt = `Charles Bakers Menu - Page ${page}`;
-
-    pageNumber.textContent = page;
-
-    updateButtons();
+    scrollGuide.classList.add("hidden");
 }
 
 
-// ==============================
-// Previous / Next Buttons
-// ==============================
+/* =========================================
+   DETECT PAGE SCROLL
+========================================= */
 
-function updateButtons() {
+window.addEventListener(
+    "scroll",
+    () => {
 
-    prevBtn.disabled = currentPage === 1;
+        /*
+         * Once user starts scrolling,
+         * remove the guide.
+         */
+        if (window.scrollY > 20) {
 
-    nextBtn.disabled = currentPage === totalPages;
-}
+            hideScrollGuide();
 
+        }
 
-prevBtn.addEventListener("click", () => {
-
-    if (currentPage > 1) {
-        showPage(currentPage - 1);
+    },
+    {
+        passive: true
     }
+);
 
-});
 
+/* =========================================
+   TOUCH START
+========================================= */
 
-nextBtn.addEventListener("click", () => {
+let touchStartY = 0;
 
-    if (currentPage < totalPages) {
-        showPage(currentPage + 1);
+window.addEventListener(
+    "touchstart",
+    (event) => {
+
+        touchStartY =
+            event.touches[0].clientY;
+
+    },
+    {
+        passive: true
     }
+);
 
-});
+
+/* =========================================
+   TOUCH MOVE
+========================================= */
+
+window.addEventListener(
+    "touchmove",
+    (event) => {
+
+        const currentY =
+            event.touches[0].clientY;
+
+        const distance =
+            touchStartY - currentY;
 
 
-// ==============================
-// Keyboard Navigation
-// ==============================
+        /*
+         * User is swiping upward
+         */
+        if (distance > 10) {
 
-document.addEventListener("keydown", (event) => {
+            hideScrollGuide();
 
-    if (event.key === "ArrowLeft") {
+        }
 
-        if (currentPage > 1) {
-            showPage(currentPage - 1);
+    },
+    {
+        passive: true
+    }
+);
+
+
+/* =========================================
+   DISABLE RIGHT CLICK
+========================================= */
+
+document.addEventListener(
+    "contextmenu",
+    (event) => {
+
+        event.preventDefault();
+
+    }
+);
+
+
+/* =========================================
+   DISABLE IMAGE DRAGGING
+========================================= */
+
+document.addEventListener(
+    "dragstart",
+    (event) => {
+
+        if (
+            event.target &&
+            event.target.tagName === "IMG"
+        ) {
+
+            event.preventDefault();
+
         }
 
     }
-
-    if (event.key === "ArrowRight") {
-
-        if (currentPage < totalPages) {
-            showPage(currentPage + 1);
-        }
-
-    }
-
-});
-
-
-// ==============================
-// Swipe Navigation
-// ==============================
-
-let touchStartX = 0;
-let touchEndX = 0;
-
-
-menuViewer.addEventListener("touchstart", (event) => {
-
-    touchStartX = event.changedTouches[0].screenX;
-
-}, { passive: true });
-
-
-menuViewer.addEventListener("touchend", (event) => {
-
-    touchEndX = event.changedTouches[0].screenX;
-
-    handleSwipe();
-
-}, { passive: true });
-
-
-function handleSwipe() {
-
-    const swipeDistance = touchEndX - touchStartX;
-
-    // Swipe left → next page
-    if (swipeDistance < -50) {
-
-        if (currentPage < totalPages) {
-            showPage(currentPage + 1);
-        }
-
-    }
-
-    // Swipe right → previous page
-    if (swipeDistance > 50) {
-
-        if (currentPage > 1) {
-            showPage(currentPage - 1);
-        }
-
-    }
-}
-
-
-// ==============================
-// Fullscreen
-// ==============================
-
-fullscreenBtn.addEventListener("click", async () => {
-
-    try {
-
-        if (!document.fullscreenElement) {
-
-            await menuViewer.requestFullscreen();
-
-            fullscreenBtn.textContent = "✕ Exit Fullscreen";
-
-        } else {
-
-            await document.exitFullscreen();
-
-            fullscreenBtn.textContent = "⛶ Fullscreen";
-        }
-
-    } catch (error) {
-
-        console.log("Fullscreen not supported:", error);
-
-    }
-
-});
-
-
-document.addEventListener("fullscreenchange", () => {
-
-    if (!document.fullscreenElement) {
-
-        fullscreenBtn.textContent = "⛶ Fullscreen";
-
-    }
-
-});
-
-
-// ==============================
-// Disable Right Click
-// ==============================
-
-document.addEventListener("contextmenu", (event) => {
-
-    event.preventDefault();
-
-});
-
-
-// ==============================
-// Prevent Image Dragging
-// ==============================
-
-menuImage.addEventListener("dragstart", (event) => {
-
-    event.preventDefault();
-
-});
-
-
-// ==============================
-// Initial Page
-// ==============================
-
-showPage(1);
+);
