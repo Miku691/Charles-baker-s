@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+
+    <meta name="theme-color" content="#f8eeee">
+
+    <title>Charles Bakers - Menu</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>Charles Bakers</h1>
+        <p>Menu</p>
+    </header>
+
+    <main class="menu-container">
+
+        <button class="nav-btn prev" id="prevBtn" aria-label="Previous page">
+            &#10094;
+        </button>
+
+        <div class="menu-viewer" id="menuViewer">
+            <img
+                id="menuImage"
+                src="assets/page-01.webp"
+                alt="Charles Bakers Menu - Page 1"
+                draggable="false"
+            >
+        </div>
+
+        <button class="nav-btn next" id="nextBtn" aria-label="Next page">
+            &#10095;
+        </button>
+
+    </main>
+
+    <div class="page-info">
+        <span id="pageNumber">1</span> / 11
+    </div>
+
+    <div class="controls">
+        <button id="fullscreenBtn">⛶ Fullscreen</button>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
